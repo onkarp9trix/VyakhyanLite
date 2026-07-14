@@ -60,6 +60,9 @@ public class Messages {
     @Column(name = "analyze_response")
     private Map<String,Object> analyzeResponse;
 
+    @Column(name = "file_used+")
+    private String fileUsed;
+
     @Column(name = "user_id")
     private String userId;
 

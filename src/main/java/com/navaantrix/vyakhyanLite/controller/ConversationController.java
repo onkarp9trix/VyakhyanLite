@@ -100,4 +100,6 @@ public class ConversationController {
        List<ConversationResponse> response = conversationService.getConversationByUserId(userId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
 }

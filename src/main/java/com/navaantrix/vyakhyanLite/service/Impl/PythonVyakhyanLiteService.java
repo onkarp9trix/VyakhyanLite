@@ -121,17 +121,25 @@ public class PythonVyakhyanLiteService {
             payload.put("page",page);
             payload.put("size" ,size);
 
-            return webClient.post()
+            String response = webClient.post()
                     .uri("/view_data")
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(payload)
                     .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                    .bodyToMono(String.class)
                     .block();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            return objectMapper.readValue(
+                    response,
+                    new TypeReference<Map<String, Object>>() {}
+            );
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
+
 
     public Map<String, Object> fetchSchema(String fileName){
         try{

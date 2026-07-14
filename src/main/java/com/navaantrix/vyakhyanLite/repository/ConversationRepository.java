@@ -55,5 +55,7 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     );
 
     Conversation findTopByUserIdAndStatusStatusIdOrderByConversationIdDesc(String userId, Long activeStatus);
+
+//    Conversation findByConversationIdAndStatusStatusIdNot(Long conversationId, Long deleteStatus);
 }
 

@@ -5,10 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Data
@@ -38,6 +41,10 @@ public class Conversation {
 
     @Column(name = "file_names")
     private List<String> fileName;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "file_name_and_schema")
+    private Map<String ,Object> fileNameAndSchema;
 
     @ManyToOne
     @JoinColumn(name = "status_id")

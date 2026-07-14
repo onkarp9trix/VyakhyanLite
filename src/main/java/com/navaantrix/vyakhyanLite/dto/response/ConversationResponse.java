@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 
 @Data
@@ -28,4 +29,6 @@ public class ConversationResponse {
     private List<String> fileName;
 
     private Long statusId;
+
+    private Map<String,Object> fileNameAndSchema;
 }

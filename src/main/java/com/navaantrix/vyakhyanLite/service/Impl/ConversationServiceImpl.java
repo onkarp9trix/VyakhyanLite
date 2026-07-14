@@ -257,7 +257,8 @@ public class ConversationServiceImpl implements ConversationService {
                 .createdAt(c.getCreatedAt())
                 .isArchived(c.isArchived())
                 .userId(c.getUserId())
-                .fileName(c.getFileName())
+                .fileName((List<String>) c.getFileName())
+                .fileNameAndSchema(c.getFileNameAndSchema())
                 .statusId(c.getStatus().getStatusId())
                 .build();
     }

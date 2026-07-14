@@ -39,6 +39,7 @@ public class MessagesResponse {
 
     private Map<String,Object> analyzeResponse;
 
+    private String fileUsed;
 
     private String userId;
 }

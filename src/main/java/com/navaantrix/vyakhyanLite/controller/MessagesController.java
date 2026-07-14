@@ -2,6 +2,7 @@ package com.navaantrix.vyakhyanLite.controller;
 
 
 import com.navaantrix.vyakhyanLite.dto.request.*;
+import com.navaantrix.vyakhyanLite.dto.response.MessageFeedBackResponse;
 import com.navaantrix.vyakhyanLite.dto.response.MessagesResponse;
 import com.navaantrix.vyakhyanLite.service.MessagesService;
 import com.navaantrix.vyakhyanLite.util.JwtUtil;
@@ -22,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -33,9 +35,7 @@ public class MessagesController {
     private final MessagesService messagesService;
 
     @PostMapping(path = "/save_file",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MessagesResponse>  fileSave(
-            @ModelAttribute MessageRequest request , HttpServletRequest Hrequest
-            ){
+    public ResponseEntity<MessagesResponse>  fileSave(@ModelAttribute MessageRequest request , HttpServletRequest Hrequest){
         //  Get token from header
         String authHeader = Hrequest.getHeader("Authorization");
         String token = null;
@@ -52,9 +52,7 @@ public class MessagesController {
     }
 
     @PostMapping("/descriptive_statistics")
-    public ResponseEntity<MessagesResponse>  descriptive_statistics(
-            @RequestBody MessageDescriptiveStatisticsRequest request , HttpServletRequest Hrequest
-    ){
+    public ResponseEntity<Map<String,Object>>  descriptive_statistics(@RequestBody MessageDescriptiveStatisticsRequest request , HttpServletRequest Hrequest){
         //  Get token from header
         String authHeader = Hrequest.getHeader("Authorization");
         String token = null;
@@ -65,16 +63,14 @@ public class MessagesController {
         JwtUtil jwtUtil = new JwtUtil();
         String userId = jwtUtil.extractUserId(token);
 
-        MessagesResponse response = messagesService.descriptiveStatistics(request,userId);
+        Map<String,Object> response = messagesService.descriptiveStatistics(request,userId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
     @PostMapping("/run_query")
-    public ResponseEntity<MessagesResponse>  run_query(
-            @RequestBody MessageRunQueryRequest request , HttpServletRequest Hrequest
-    ){
+    public ResponseEntity<MessagesResponse>  run_query(@RequestBody MessageRunQueryRequest request , HttpServletRequest Hrequest){
         //  Get token from header
         String authHeader = Hrequest.getHeader("Authorization");
         String token = null;
@@ -97,7 +93,7 @@ public class MessagesController {
     }
 
     @PostMapping("/view_data")
-    public ResponseEntity<MessagesResponse> viewData(@RequestBody MessageViewDataRequest request , HttpServletRequest Hrequest){
+    public ResponseEntity<Map<String,Object>> viewData(@RequestBody MessageViewDataRequest request , HttpServletRequest Hrequest){
         //  Get token from header
         String authHeader = Hrequest.getHeader("Authorization");
         String token = null;
@@ -108,13 +104,13 @@ public class MessagesController {
         JwtUtil jwtUtil = new JwtUtil();
         String userId = jwtUtil.extractUserId(token);
 
-        MessagesResponse response = messagesService.viewData(request,userId);
+        Map<String,Object> response = messagesService.viewData(request,userId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/fetch_schema")
-    public ResponseEntity<MessagesResponse> fetchSchema(@RequestBody MessageFetchSchemaRequest request , HttpServletRequest Hrequest){
+    public ResponseEntity<Map<String,Object>> fetchSchema(@RequestBody MessageFetchSchemaRequest request , HttpServletRequest Hrequest){
         //  Get token from header
         String authHeader = Hrequest.getHeader("Authorization");
         String token = null;
@@ -125,13 +121,14 @@ public class MessagesController {
         JwtUtil jwtUtil = new JwtUtil();
         String userId = jwtUtil.extractUserId(token);
 
-        MessagesResponse response = messagesService.fetchSchema(request,userId);
+        Map<String,Object> response = messagesService.viewSchema(request,userId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 
     @PostMapping("/generate_dashboard")
-    public ResponseEntity<MessagesResponse> generateDashboard(@RequestBody generateDashboardRequest request,HttpServletRequest Hrequest){
+    public ResponseEntity<Map<String,Object>> generateDashboard(@RequestBody generateDashboardRequest request,HttpServletRequest Hrequest){
         //  Get token from header
         String authHeader = Hrequest.getHeader("Authorization");
         String token = null;
@@ -142,17 +139,16 @@ public class MessagesController {
         JwtUtil jwtUtil = new JwtUtil();
         String userId = jwtUtil.extractUserId(token);
 
-        MessagesResponse response = messagesService.generateDashboard(request,userId);
+        Map<String,Object> response = messagesService.generateDashboard(request,userId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
 
     @GetMapping("/dashboard/view/{fileName}")
     public ResponseEntity<Resource> viewDashboard(@PathVariable String fileName) {
 
         // Base folder where Python generates HTML
-        String basePath = "/home/tatva/poirot/Analytical_Output/dashboard/";
+        String basePath = "/home/tatva/vyakhyan_lite/production/py/Analytical_Output/dashboard/";
 
         // Build full path
         Path path = Paths.get(basePath, fileName);
@@ -171,7 +167,7 @@ public class MessagesController {
     }
 
     @PostMapping("/get_insights")
-    public ResponseEntity<MessagesResponse> getInsights(@RequestBody MessageGetInsightsRequest request,HttpServletRequest Hrequest){
+    public ResponseEntity<MessagesResponse> getInsights(@RequestBody MessageGetInsightsRequest request,HttpServletRequest Hrequest) {
         //  Get token from header
         String authHeader = Hrequest.getHeader("Authorization");
         String token = null;
@@ -185,6 +181,48 @@ public class MessagesController {
         MessagesResponse response = messagesService.getInsights(request,userId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/view_schema")
+    public ResponseEntity<Map<String,Object>> viewSchema(@RequestBody MessageFetchSchemaRequest request , HttpServletRequest Hrequest){
+        //  Get token from header
+        String authHeader = Hrequest.getHeader("Authorization");
+        String token = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+        //  Extract userId (sub)
+        JwtUtil jwtUtil = new JwtUtil();
+        String userId = jwtUtil.extractUserId(token);
+
+        Map<String,Object> response = messagesService.viewSchema(request,userId);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/update_schema")
+    public ResponseEntity<Map<String,Object>> updateSchema(@RequestBody UpdateSchemaRequest request , HttpServletRequest Hrequest){
+        //  Get token from header
+        String authHeader = Hrequest.getHeader("Authorization");
+        String token = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+        //  Extract userId (sub)
+        JwtUtil jwtUtil = new JwtUtil();
+        String userId = jwtUtil.extractUserId(token);
+
+        Map<String,Object> response = messagesService.updateSchema(request,userId);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/feedback")
+    public ResponseEntity<MessageFeedBackResponse> feedBackMessage(@RequestBody MessageFeedBackRequest request){
+
+        MessageFeedBackResponse response = messagesService.feedBack(request);
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
 }
